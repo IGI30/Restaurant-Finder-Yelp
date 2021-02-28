@@ -1,25 +1,57 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import Axios from 'axios';
+import store from './store/store';
+import { addRestaurants } from './actions/restaurants';
+import RestaurantsList from './components/RestaurantsList';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App = () => {
+    const url = "http://localhost:3030/restaurants";
+
+    const getData = () => {
+        // const result = await Axios.get(url);
+        Axios.get(url).then(response => {
+            // console.log(response.data);
+            store.dispatch(addRestaurants(response.data.businesses));
+        });
+
+        // console.log(result.data.businesses);
+    }
+
+    useEffect(() => {
+        getData();
+    })
+
+    return (
+        <div>
+            <Navbar>
+                <NavItem icon="IGI" />
+                <li className="nav-item-head">
+                    <h2 onClick={getData}>Restaurant Finder</h2>
+                </li>
+            </Navbar>
+            <RestaurantsList />
+        </div>
+    )
 }
 
-export default App;
+function Navbar(props) {
+    return (
+        <nav className="m-navbar">
+            <ul className="m-navbar-nav">
+                { props.children }
+            </ul>
+        </nav>
+    );
+}
+
+function NavItem(props) {
+    return (
+        <li className="nav-item">
+            <a href="#" className="icon-button">
+                { props.icon }
+            </a>
+        </li>
+    );
+}
+
+export default App
